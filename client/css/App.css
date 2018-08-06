@@ -1,0 +1,94 @@
+.button-col {
+  width:100px;
+  text-align:center;
+}
+.desc-col {
+width:300px;
+text-align:left;
+}
+table {
+  counter-reset: tableCount;
+}
+.counterCell:before {
+  content: counter(tableCount);
+  counter-increment: tableCount;
+}
+.counterCell {
+text-align: center;
+width:50px;
+}
+.button-center {
+text-align: center;
+}
+.Modal, .login-layout .centerize {
+ position: relative;
+ top: 25%;
+ left: calc(50% - 250px);
+ background-color: #F5F5F5;
+ width:500px;
+ border: 1px solid #000;
+ border-radius: 4px;
+ padding: 20px;
+}
+.login-layout {
+  position: fixed;
+  top: 0; bottom: 0; left: 0; right: 0;
+  background-color: rgb(182, 187, 194);
+  display: flex;
+  align-items: center;
+}
+.login-layout .centerize {
+  display: inline-block;
+  top: unset;
+}
+.error-message {
+  text-align: center;
+    margin-bottom: 0;
+    margin-top: 10px;
+    color: red;
+}
+.Overlay {
+ position: fixed;
+ top: 0;
+ left: 0;
+ right: 0;
+ bottom: 0;
+ background-color: rebeccapurple;
+}
+.button-center {
+text-align: center;
+}
+label{
+display:inline-block;
+width:200px;
+margin-right:30px;
+text-align:right;
+}
+fieldset{
+border:none;
+margin:0px auto;
+}
+.closebtn{
+ float:right;
+}
+.app-title {
+  text-align: center;
+  color: blue;
+}
+.ui.form .field>label {
+  text-align: left;
+}
+@media screen and (max-width: 576px) {
+  .Modal, .login-layout .centerize {
+    width: 80%;
+    left: 0;
+    margin-left: 10%;
+  }
+
+  .Modal label, .login-layout .centerize label {
+    text-align: left;
+  }
+  .Modal input, .login-layout .centerize input {
+    width: 100%;
+  }
+}
