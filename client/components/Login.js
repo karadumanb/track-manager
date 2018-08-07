@@ -18,15 +18,6 @@ class Login extends React.Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
-    componentDidMount() {
-        this.setState({
-            elapsed: this.props.selectedElapsed
-        });
-        this.setState({
-            since: this.props.selectedSince
-        });
-    }
-
     onClick(e) {
         this.login(this);
     }
@@ -46,6 +37,7 @@ class Login extends React.Component {
             });
         });
     }
+    
     handleTextChange(e) {
         if (e.target.name == "username") {
             this.setState({

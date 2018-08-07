@@ -2,56 +2,69 @@ import React from 'react'
 import { Grid } from 'semantic-ui-react'
 import uuid from 'uuid'
 import axios from 'axios'
+import _ from 'lodash'
 
 import EditableTimerList from './EditableTimerList'
 import ToggleableTimerForm from './ToggleableTimerForm'
 import { newTimer } from './helpers'
+import { updateAll, createUrlWithParams, updateTrackOnStartOrStop } from './services';
+import Filters from './Filters';
+var querystring = require('querystring');
 
 class TimerDashboard extends React.Component {
   constructor () {
     super()
+    this.queryJson = { runningSince: '', title: ''};
 
     this.state = {
       timers: [
         {
-          title: 'Learn NodeJs',
-          description: 'Create time tracker app',
-          id: uuid.v4(),
+          title: 'Learn NodeJs --- Created ---',
+          description: 'Create time tracker app --- Created ---',
           elapsed: 7423081,
-          runningSince: Date.now()
+          runningSince: Date.now(),
+          id: uuid.v4()
         },
         {
-          title: 'MERN || MEAN STACK',
-          description: 'Use nodeJs, react, angular and PHP',
-          id: uuid.v4(),
+          title: 'MERN || MEAN STACK --- Created ---',
+          description: 'Use nodeJs, react, angular and PHP --- Created ---',
           elapsed: 1981207,
-          runningSince: null
+          runningSince: null,
+          id: uuid.v4()
         }
       ]
     }
-    this.getData = this.getData.bind(this);
   }
+  
 
-  getData(that){
-    //I wanted to add filters here
+  getData(that) {
+    //If no data remains in db, put the two dummy data of state into the db
     axios.get('/getAll')
       .then(function(response) {
-          let savedTimers = that.state.timers;
-          response.data.forEach((timer)=>{
-            savedTimers.push({
-              title: timer.title, 
-              description: timer.description, 
-              id: timer._id || uuid.v4(),
-              elapsed: timer.elapsed || 0,
-              runningSince: timer.since || null
+          let savedTimers = [];
+          if(response.data.length === 0) {
+            that.state.timers.forEach((timer)=>{
+                axios.post('/insert',
+                querystring.stringify(timer), {
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                  }
+                }).then(function (response) {
+                  timer.id = response.id
+                  savedTimers.push(timer);
+                  that.setState({timers: savedTimers});
+              });
             });
-          })
-        that.setState({timers: savedTimers});
+          } else {
+            that.saveDataToState(that, response.data)
+          }
       });
   }
+
   componentDidMount() {
-    this.getData(this);
+      this.getData(this);
   }
+
   updateTimer (attrs) {
     this.setState({
       timers: this.state.timers.map(timer => {
@@ -66,50 +79,109 @@ class TimerDashboard extends React.Component {
       })
     })
   }
+
   createTimer (timer) {
     const t = newTimer(timer)
     this.setState({
       timers: this.state.timers.concat(t)
     })
   }
+
   deleteTimer (timerId) {
-    this.setState({
-      timers: this.state.timers.filter(t => t.id !== timerId)
-    })
+    axios.get('/delete?id='+timerId)
+      .then((response) => {
+        if(!response.data.name) {
+          this.setState({
+            timers: this.state.timers.filter(t => t.id !== timerId)
+          });
+        }
+      }).catch((err) => {
+        console.log(err)
+      });
   }
+
   startTimer (timerId) {
     const now = Date.now()
-
+    let timers = this.state.timers.map(timer => {
+      if (timer.id === timerId) {
+        return Object.assign({}, timer, {
+          runningSince: now
+        })
+      } else {
+        return timer
+      }
+    });
+    let timerToUpdate = null;
+    timers.forEach(timer => {
+      if(timer.id === timerId) {
+        timerToUpdate = timer;
+      }
+    });
+    if(timerToUpdate) updateTrackOnStartOrStop(timerToUpdate);
     this.setState({
-      timers: this.state.timers.map(timer => {
-        if (timer.id === timerId) {
-          return Object.assign({}, timer, {
-            runningSince: now
-          })
-        } else {
-          return timer
-        }
-      })
+      timers 
     })
   }
+
   stopTimer (timerId) {
-    const now = Date.now()
-
+    const now = Date.now();
+    let timers = this.state.timers.map(timer => {
+      if (timer.id === timerId) {
+        const lastElapsed = now-timer.runningSince
+        return Object.assign({}, timer, {
+          elapsed: timer.elapsed + lastElapsed,
+          runningSince: null
+        })
+      } else {
+        return timer
+      }
+    });
+    let timerToUpdate = null;
+    timers.forEach(timer => {
+      if(timer.id === timerId) {
+        timerToUpdate = timer;
+      }
+    });
+    if(timerToUpdate) updateTrackOnStartOrStop(timerToUpdate);
     this.setState({
-      timers: this.state.timers.map(timer => {
-        if (timer.id === timerId) {
-          const lastElapsed = now-timer.runningSince
-          return Object.assign({}, timer, {
-            elapsed: timer.elapsed + lastElapsed,
-            runningSince: null
-          })
-        } else {
-          return timer
-        }
-      })
-    })
+      timers
+    });
   }
+  
+
+  onQueryChange(query) {
+    if(typeof(query)==='boolean') {
+      if(query) {
+        this.queryJson.runningSince = 'null';
+      } else {
+        this.queryJson.runningSince = '';
+      }
+    } else {
+      this.queryJson.title = query;
+    }
+    let urlWithQuery = createUrlWithParams('/getAll?runningSince={runningSince}&title={title}', this.queryJson);
+    axios.get(urlWithQuery)
+    .then((response) => { 
+      this.saveDataToState(this, response.data)
+    });
+  }
+
+  saveDataToState(that, data) {
+    let savedTimers = [];
+    data.forEach((timer)=>{
+      savedTimers.push({
+        title: timer.title, 
+        description: timer.description, 
+        id: timer._id || uuid.v4(),
+        elapsed: timer.elapsed || 0,
+        runningSince: timer.runningSince || null
+      });
+    });
+    that.setState({timers: savedTimers});
+  }
+
   render () {
+    const onQueryChange = _.debounce((query)=>{this.onQueryChange(query)}, 400);
     return (
       <Grid centered>
         <Grid.Column mobile={16} tablet={8} computer={4}>
@@ -122,6 +194,10 @@ class TimerDashboard extends React.Component {
           />
           <ToggleableTimerForm
             onFormSubmit={timer => this.createTimer(timer)}
+          />
+          <Filters
+            onTextChange={(query)=>{onQueryChange(query)}}
+            onCheckboxChange={(query)=>{this.onQueryChange(query)}}
           />
         </Grid.Column>
       </Grid>

@@ -1,6 +1,7 @@
 import React from 'react'
 import { Card, Form, Button, Message } from 'semantic-ui-react'
 import axios from 'axios';
+import { insertNewTrack, updateTrack } from './services';
 var querystring = require('querystring');
 
 class TimerForm extends React.Component {
@@ -12,49 +13,13 @@ class TimerForm extends React.Component {
     }
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-  insertNewTrack(values) {
-    axios.post('/insert',
-        querystring.stringify({
-          description: values.description.value,
-          title: values.title.value,
-          elapsed: 0,
-          since: new Date().getTime()
-        }), {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-          }
-        }).then(function(response) {
-          console.log(response.data);
-    });
-  }
-  updateTrack(values) {
-    console.log(values)
-    axios.post('/update',
-      querystring.stringify({
-        _id: values.id,
-        description: values.description,
-        title: values.title,
-        elapsed: values.elapsed,
-        since: Date.now()
-      }), {
-        headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
-        }
-      }).then(function(response) {
-        console.log(response.data);
-    }); 
-  }
+
   handleSubmit (submitType) {
     if (this.refs.title.value && this.refs.description.value) {
-      this.props.onFormSubmit({
-        id: this.props.id,
-        title: this.refs.title.value,
-        description: this.refs.description.value
-      })
       if(submitType === 'Create') {
-        this.insertNewTrack(this.refs);
+        insertNewTrack(this, { description: this.refs.description.value, title: this.refs.title.value, elapsed: 0, runningSince: Date.now()});
       } else if(submitType === 'Update') {
-        this.updateTrack(this.refs);
+        updateTrack(this, {_id: this.props.id, description: this.refs.description.value, title: this.refs.title.value});
       }
     } else {
       let errorsList = []

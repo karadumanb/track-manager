@@ -4,7 +4,7 @@ var trackSchema = new Schema({
   title: String,
   description: String,
   elapsed: Number,
-  since: Number
+  runningSince: Number
 //   amount: Number,
 //   month: String,
 //   year: Number

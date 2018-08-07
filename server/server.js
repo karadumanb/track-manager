@@ -5,7 +5,7 @@ var bodyParser = require('body-parser');
 var app = express();
 var mongoose = require('mongoose');
 
-var dbConnectionURL = 'mongodb://localhost:27017';
+var dbConnectionURL = 'mongodb://baturay:123456@localhost:27017';
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, '../client'));
