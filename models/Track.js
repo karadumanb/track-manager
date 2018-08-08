@@ -4,9 +4,7 @@ var trackSchema = new Schema({
   title: String,
   description: String,
   elapsed: Number,
-  runningSince: Number
-//   amount: Number,
-//   month: String,
-//   year: Number
+  runningSince: Number,
+  updateDate: String
 });
 module.exports = mongoose.model('Track', trackSchema);

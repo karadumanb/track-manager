@@ -4,8 +4,10 @@ const newTimer = (attrs = {}) => {
   const timer = {
     title: attrs.title || 'Timer',
     description: attrs.description || 'Description',
-    id: uuid.v4(), // might be removed here
-    elapsed: 0
+    id: attrs.id || uuid.v4(), // might be removed here
+    runningSince: attrs.runningSince || null,
+    elapsed: 0,
+    updateDate: attrs.updateDate || new Date().toISOString()
   }
 
   return timer

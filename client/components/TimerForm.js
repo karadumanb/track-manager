@@ -17,7 +17,7 @@ class TimerForm extends React.Component {
   handleSubmit (submitType) {
     if (this.refs.title.value && this.refs.description.value) {
       if(submitType === 'Create') {
-        insertNewTrack(this, { description: this.refs.description.value, title: this.refs.title.value, elapsed: 0, runningSince: Date.now()});
+        insertNewTrack(this, { description: this.refs.description.value, title: this.refs.title.value, elapsed: 0, runningSince: Date.now(), updateDate: new Date().toISOString()});
       } else if(submitType === 'Update') {
         updateTrack(this, {_id: this.props.id, description: this.refs.description.value, title: this.refs.title.value});
       }

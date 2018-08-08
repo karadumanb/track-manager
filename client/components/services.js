@@ -9,9 +9,12 @@ const insertNewTrack = (that, data) => {
       }
     }).then(function (response) {
     that.props.onFormSubmit({
-      id: response.id,
+      id: response.data.id,
       title: data.title,
-      description: data.description
+      description: data.description,
+      since: null,
+      elapsed: 0,
+      updateDate: data.updateDate
     });
   });
 }
@@ -32,7 +35,7 @@ const updateTrack = (that, data) => {
 }
 
 const updateTrackOnStartOrStop = (data) => {
-  axios.post('/update', {_id: data.id, runningSince: data.runningSince, elapsed: data.elapsed, title: data.title, description: data.description}).then(function (response) {
+  axios.post('/update', {_id: data.id, runningSince: data.runningSince, elapsed: data.elapsed, title: data.title, description: data.description, updateDate: data.updateDate}).then(function (response) {
       //console.log(response);
   });
 }

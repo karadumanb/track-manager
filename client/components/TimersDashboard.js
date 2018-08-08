@@ -23,14 +23,16 @@ class TimerDashboard extends React.Component {
           description: 'Create time tracker app --- Created ---',
           elapsed: 7423081,
           runningSince: Date.now(),
-          id: uuid.v4()
+          id: uuid.v4(),
+          updateDate: new Date().toISOString()
         },
         {
           title: 'MERN || MEAN STACK --- Created ---',
           description: 'Use nodeJs, react, angular and PHP --- Created ---',
           elapsed: 1981207,
           runningSince: null,
-          id: uuid.v4()
+          id: uuid.v4(),
+          updateDate: new Date().toISOString()
         }
       ]
     }
@@ -50,7 +52,7 @@ class TimerDashboard extends React.Component {
                     "Content-Type": "application/x-www-form-urlencoded"
                   }
                 }).then(function (response) {
-                  timer.id = response.id
+                  timer.id = response.data.id
                   savedTimers.push(timer);
                   that.setState({timers: savedTimers});
               });
@@ -105,7 +107,8 @@ class TimerDashboard extends React.Component {
     let timers = this.state.timers.map(timer => {
       if (timer.id === timerId) {
         return Object.assign({}, timer, {
-          runningSince: now
+          runningSince: now,
+          updateDate: new Date().toISOString()
         })
       } else {
         return timer
@@ -130,7 +133,8 @@ class TimerDashboard extends React.Component {
         const lastElapsed = now-timer.runningSince
         return Object.assign({}, timer, {
           elapsed: timer.elapsed + lastElapsed,
-          runningSince: null
+          runningSince: null,
+          updateDate: new Date().toISOString()
         })
       } else {
         return timer
@@ -169,18 +173,21 @@ class TimerDashboard extends React.Component {
   saveDataToState(that, data) {
     let savedTimers = [];
     data.forEach((timer)=>{
+      console.log(timer)
       savedTimers.push({
         title: timer.title, 
         description: timer.description, 
-        id: timer._id || uuid.v4(),
+        id: timer._id || timer.id || uuid.v4(),
         elapsed: timer.elapsed || 0,
-        runningSince: timer.runningSince || null
+        runningSince: timer.runningSince || null,
+        updateDate: timer.updateDate || new Date().toISOString()
       });
     });
     that.setState({timers: savedTimers});
   }
 
   render () {
+    console.log(this.state.timers)
     const onQueryChange = _.debounce((query)=>{this.onQueryChange(query)}, 400);
     return (
       <Grid centered>

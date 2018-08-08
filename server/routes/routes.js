@@ -24,6 +24,8 @@ router.route(Routes.INSERT)
   track.description = req.body.description;
   track.elapsed = req.body.elapsed;
   track.runningSince = req.body.runningSince;
+  track.updateDate = req.body.updateDate;
+  console.log(track)
   track.save(function(err, docsInserted) {
       if (err)
         res.send(err);
@@ -58,7 +60,8 @@ router.route(Routes.UPDATE)
      title: req.body.title,
      description: req.body.description,
      runningSince: req.body.runningSince,
-     elapsed: req.body.elapsed
+     elapsed: req.body.elapsed,
+     updateDate: req.body.updateDate
  };
   Track.update({_id: req.body._id}, doc, function(err, result) {
       if (err)
@@ -76,7 +79,8 @@ router.route(Routes.UPDATE_ALL)
       title: item.title,
       description: item.description,
       runningSince: item.runningSince,
-      elapsed: item.elapsed
+      elapsed: item.elapsed,
+      updateDate: new Date().toISOString()
   };
    Track.update({_id: item.id}, doc, function(err, result) {
         if (err)

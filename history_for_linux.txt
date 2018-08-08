@@ -1,0 +1,22 @@
+ 1896  sudo npm i -g create-react-app
+ 1897  create-react-app track-manager
+ 1898  cd track-manager/
+ 1899  sudo npm i
+ 1900  npm start
+ 1901  npm i axios babel-cli body-parser express mongoose nodemon react-bootstrap react-modal react-router-dom --save
+ 1928  sudo apt install docker-compose
+ 1930  sudo service mongod stop 
+ 1931  sudo service apache2 stop
+ 1933  sudo docker-compose up -d
+ 1934  sudo docker-compose logs -f
+ 1935  sudo docker-compose exec mongoDb mongo
+ 1936  sudo docker-compose exec mongoDb mongo -u baturay -p 123456 --authenticationDatabase "admin"
+ 1937  docker-compose up -d
+ 1938  sudo docker-compose up -d
+ 1939  sudo docker-compose exec mongoDb mongo -u baturay -p 123456 --authenticationDatabase "admin"
+
+ <--  Other remaining dependencies  -->
+ 1964  sudo npm i semantic-ui-react --save
+ 1965  sudo npm i uuid --save
+ 1966  sudo npm i react-bootstrap --save
+ 1967  sudo npm i semantic-ui-css --save

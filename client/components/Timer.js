@@ -46,6 +46,9 @@ class Timer extends React.Component {
           <Card.Meta>
             {this.props.description}
           </Card.Meta>
+          <Card.Meta className="date">
+            {this.props.updateDate}
+          </Card.Meta>
           <Card.Description>
             <Header as='h2' textAlign='center'>{ elapsedString }</Header>
           </Card.Description>
